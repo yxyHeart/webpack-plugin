@@ -19,7 +19,6 @@ class DefineWebpackPlugin {
       for (let entrypoint of entrypoints) {
         // 找到相关的chunk
         const chunks = entrypoint[1].chunks;
-
         chunks.forEach((chunk) => {
           // 找到相关的文件
           const files = chunk.files;

@@ -25,5 +25,9 @@ function poll<T>(options: PollOptions<T>) {
       }, interval);
     }
   };
+
   return new Promise(executePoll);
 }
+
+
+export default poll;

@@ -1,43 +1,49 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function useTimer(initTime: number) {
-  const [timer, setTimer] = useState<number>(0);
+    const timerRef = useRef<NodeJS.Timeout>(0 as unknown as NodeJS.Timeout);
 
-  const [paused, setPaused] = useState(false);
-  const [second, setSecond] = useState<number>(initTime);
+    const [paused, setPaused] = useState(true);
+    const [second, setSecond] = useState<number>(initTime);
+    useEffect(() => {
+        let timerId: NodeJS.Timeout;
 
-  useEffect(() => {
-    let timerId;
+        if (!paused && !timerRef.current) {
+            timerId = setInterval(() => {
+                setSecond((prev) => prev - 1);
+            }, 1000);
+            timerRef.current = timerId;
+        } else if (paused) {
+            clearInterval(timerRef.current);
+        }
+    }, [paused]);
 
-    if (!paused) {
-      timerId = setInterval(() => {
-        setSecond((prev) => prev - 1);
-      });
-      setTimer(timerId);
-    } else if (second === 0 || paused) {
-      clearInterval(timer);
-    }
-  }, [paused, second, timer]);
+    useEffect(() => {
+        if (second === 0) {
+            clearInterval(timerRef.current);
+            setPaused(true);
+        }
+    }, [second]);
 
-  const start = () => {
-    setPaused(false);
-  };
+    const start = useCallback(() => {
+        setPaused(false);
+    }, []);
 
-  const pause = () => {
-    setPaused(true);
-  };
+    const pause = useCallback(() => {
+        setPaused(true);
+    }, []);
 
-  const reset = () => {
-    clearInterval(timer);
-    setPaused(true);
-    setSecond(0);
-    setTimer(0);
-  };
+    const reset = useCallback(() => {
+        clearInterval(timerRef.current);
+        setPaused(true);
+        setSecond(initTime);
+        timerRef.current = 0 as unknown as NodeJS.Timeout;
+    }, [initTime]);
 
-  return {
-    start,
-    pause,
-    reset,
-    second,
-  };
+    return {
+        start,
+        pause,
+        reset,
+        second,
+    };
 }

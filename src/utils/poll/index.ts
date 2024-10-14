@@ -18,7 +18,7 @@ function poll<T>(options: PollOptions<T>) {
     if (validate(result)) {
       resolve(result);
     } else if (attempts >= maxAttempts) {
-      reject(new Error("Max attempts reached"));
+      reject(new Error('Max attempts reached'));
     } else {
       setTimeout(() => {
         executePoll(resolve, reject);
@@ -28,6 +28,5 @@ function poll<T>(options: PollOptions<T>) {
 
   return new Promise(executePoll);
 }
-
 
 export default poll;

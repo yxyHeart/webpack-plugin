@@ -21,7 +21,6 @@ export default function useTimer(initTime: number, lowerBound = 0, step = 0.2) {
 
   useEffect(() => {
     if (second <= lowerBound) {
-      clearInterval(timerRef.current);
       setPaused(true);
     }
   }, [second, lowerBound]);
